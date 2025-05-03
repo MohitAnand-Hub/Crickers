@@ -1,108 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cricket Team Randomizer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: auto;
-      padding: 20px;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 10px;
-    }
-    .team {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-    .captain {
-      font-weight: bold;
-      color: green;
-    }
-    .vice {
-      font-weight: bold;
-      color: orange;
-    }
-    .scoreboard {
-      margin-top: 10px;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <title>Cricket Team Setup</title>
 </head>
 <body>
-  <h2>Cricket Team Randomizer</h2>
-  <p>Enter player names (one per line or comma-separated):</p>
-  <textarea id="playerInput" placeholder="e.g. Rohit&#10;Virat&#10;Dhoni..."></textarea>
-  <br>
+  <h2>Enter Player Names</h2>
+  <textarea id="players" rows="10" cols="50"></textarea><br>
   <button onclick="generateTeams()">Generate Teams</button>
-
-  <div class="team" id="teamA"></div>
-  <div class="team" id="teamB"></div>
+  <pre id="output"></pre>
+  <button id="next" onclick="location.href='score.html'" style="display:none;">Next: Match Score</button>
 
   <script>
-    function getRandomIndices(arr, count) {
-      const indices = [];
-      while (indices.length < count) {
-        const index = Math.floor(Math.random() * arr.length);
-        if (!indices.includes(index)) {
-          indices.push(index);
-        }
-      }
-      return indices;
-    }
-
     function generateTeams() {
-      const input = document.getElementById("playerInput").value.trim();
-      let players = input.split(/\n|,/).map(p => p.trim()).filter(p => p);
-
-      if (players.length < 4) {
-        alert("Please enter at least 4 players.");
-        return;
-      }
-
-      // Shuffle players
-      for (let i = players.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [players[i], players[j]] = [players[j], players[i]];
-      }
-
-      const half = Math.ceil(players.length / 2);
-      const teamA = players.slice(0, half);
-      const teamB = players.slice(half);
-
-      const [capA, vcA] = getRandomIndices(teamA, 2);
-      const [capB, vcB] = getRandomIndices(teamB, 2);
-
-      const displayTeam = (team, capIdx, vcIdx, teamName) => {
-        let html = `<h3>${teamName}</h3><ul>`;
-        team.forEach((player, i) => {
-          if (i === capIdx) {
-            html += `<li class="captain">${player} (Captain)</li>`;
-          } else if (i === vcIdx) {
-            html += `<li class="vice">${player} (Vice-Captain)</li>`;
-          } else {
-            html += `<li>${player}</li>`;
-          }
-        });
-        html += `</ul>
-          <div class="scoreboard">
-            <label>Runs: <input type="number" placeholder="0"></label>
-            <label>Wickets: <input type="number" placeholder="0"></label>
-            <label>Overs: <input type="number" placeholder="0"></label>
-          </div>`;
-        return html;
+      let input = document.getElementById('players').value.trim().split(/\n|,/).map(x => x.trim()).filter(Boolean);
+      if (input.length < 4) return alert("Minimum 4 players required.");
+      input.sort(() => Math.random() - 0.5);
+      const teamA = input.slice(0, input.length / 2);
+      const teamB = input.slice(input.length / 2);
+      const [capA, vcA] = [teamA[0], teamA[1]];
+      const [capB, vcB] = [teamB[0], teamB[1]];
+      const data = {
+        teamA: { players: teamA, captain: capA, viceCaptain: vcA },
+        teamB: { players: teamB, captain: capB, viceCaptain: vcB }
       };
-
-      document.getElementById("teamA").innerHTML = displayTeam(teamA, capA, vcA, "Team A");
-      document.getElementById("teamB").innerHTML = displayTeam(teamB, capB, vcB, "Team B");
+      localStorage.setItem("teams", JSON.stringify(data));
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+      document.getElementById("next").style.display = 'inline';
     }
   </script>
 </body>
