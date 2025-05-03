@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detailed Scoring</title>
+</head>
+<body>
+  <h2>Detailed Ball-by-Ball Tracking</h2>
+  <form id="recordForm">
+    <label>Striker:
+      <select id="batsman"></select>
+    </label><br>
+    <label>Bowler:
+      <select id="bowler"></select>
+    </label><br>
+    <label>Runs: <input type="number" id="runs" /></label><br>
+    <label>How Out:
+      <select id="howOut">
+        <option>Not Out</option>
+        <option>Bowled</option>
+        <option>LBW</option>
+        <option>Caught</option>
+        <option>Run Out</option>
+        <option>Stumped</option>
+        <option>Hit Wicket</option>
+      </select>
+    </label><br>
+    <label>Fielder (if any): <input type="text" id="fielder" /></label><br>
+    <button type="submit">Add Record</button>
+  </form>
+  <pre id="records"></pre>
+  <button onclick="location.href='summary.html'">View Summary</button>
+
+  <script>
+    const data = JSON.parse(localStorage.getItem("teams"));
+    const allPlayers = [...data.teamA.players, ...data.teamB.players];
+    allPlayers.forEach(p => {
+      document.getElementById('batsman').innerHTML += `<option>${p}</option>`;
+      document.getElementById('bowler').innerHTML += `<option>${p}</option>`;
+    });
+
+    const records = [];
+    document.getElementById('recordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const rec = {
+        batsman: batsman.value,
+        bowler: bowler.value,
+        runs: +runs.value,
+        howOut: howOut.value,
+        fielder: fielder.value || "N/A"
+      };
+      records.push(rec);
+      document.getElementById('records').textContent = JSON.stringify(records, null, 2);
+      localStorage.setItem("matchRecords", JSON.stringify(records));
+    });
+  </script>
+</body>
+</html>
