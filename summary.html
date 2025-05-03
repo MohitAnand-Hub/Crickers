@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Match Summary</title>
+</head>
+<body>
+  <h2>Match Summary</h2>
+  <pre id="summary"></pre>
+  <button onclick="download()">Download Summary</button>
+
+  <script>
+    const teams = JSON.parse(localStorage.getItem("teams"));
+    const records = JSON.parse(localStorage.getItem("matchRecords"));
+    let summary = `Teams:\n${JSON.stringify(teams, null, 2)}\n\nRecords:\n${JSON.stringify(records, null, 2)}`;
+    document.getElementById("summary").textContent = summary;
+
+    function download() {
+      const blob = new Blob([summary], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'match_summary.txt';
+      a.click();
+    }
+  </script>
+</body>
+</html>
