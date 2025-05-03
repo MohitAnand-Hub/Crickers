@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Match Score</title>
+</head>
+<body>
+  <h2>Match Score</h2>
+  <div id="teams"></div>
+  <button onclick="location.href='detailed.html'">Next: Detailed Tracking</button>
+  <script>
+    const data = JSON.parse(localStorage.getItem("teams"));
+    const div = document.getElementById('teams');
+    ['teamA', 'teamB'].forEach(t => {
+      let html = `<h3>${t}</h3><ul>`;
+      data[t].players.forEach(p => {
+        if (p === data[t].captain) html += `<li>${p} (Captain)</li>`;
+        else if (p === data[t].viceCaptain) html += `<li>${p} (Vice)</li>`;
+        else html += `<li>${p}</li>`;
+      });
+      html += '</ul>';
+      div.innerHTML += html;
+    });
+  </script>
+</body>
+</html>
